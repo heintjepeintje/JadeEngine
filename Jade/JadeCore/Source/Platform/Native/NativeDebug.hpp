@@ -8,8 +8,8 @@ namespace Jade {
 
 		void _DebugBreak();
 		Bool8 _IsDebugging();
-		void _PrintDebug(const Char8 *debugString);
-		void _PrintDebug(const Char16 *debugString);
+		void _PrintDebug(const Char *debugString);
+		void _PrintDebug(const WideChar *debugString);
 
 	}
 

@@ -1,17 +1,5 @@
 #pragma once
 
-#define JD_CHAR8_STRING(x) reinterpret_cast<::Jade::Char8*>(x)
-#define JD_CHAR8_CSTRING(x) reinterpret_cast<const ::Jade::Char8*>(x)
-#define JD_CHAR16_STRING(x) reinterpret_cast<::Jade::Char16*>(L##x)
-#define JD_CHAR16_CSTRING(x) reinterpret_cast<const ::Jade::Char16*>(L##x)
-#define JD_CHAR32_STRING(x) reinterpret_cast<::Jade::Char32*>(U##x)
-#define JD_CHAR32_CSTRING(x) reinterpret_cast<const ::Jade::Char32*>(U##x)
-
-#define JD_CHAR_STRING(x) reinterpret_cast<::Jade::Char*>(x)
-#define JD_CHAR_CSTRING(x) reinterpret_cast<const ::Jade::Char*>(x)
-#define JD_WIDECHAR_STRING(x) reinterpret_cast<::Jade::WideChar*>(L##x)
-#define JD_WIDECHAR_CSTRING(x) reinterpret_cast<const ::Jade::WideChar*>(L##x)
-
 namespace Jade {
 
 	typedef unsigned char Char8;

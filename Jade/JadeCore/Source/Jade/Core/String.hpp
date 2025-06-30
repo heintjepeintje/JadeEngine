@@ -23,6 +23,14 @@ namespace Jade {
 
 	public:
 		BaseString() : mData(nullptr), mLength(0) { }
+		
+		BaseString(Size length) : mData(nullptr), mLength(0) {
+			if (length == 0) return;
+
+			mLength = length;
+			mData = AllocateArray<_CharType>(length + 1);
+		}
+
 		BaseString(const _CharType *data) : mData(nullptr), mLength(0) {
 			if (data == nullptr) return;
 			
@@ -204,6 +212,9 @@ namespace Jade {
 			return BaseString<_CharType>(stringData, length);
 		}
 
+		inline _CharType &operator[](Size index) { return mData[index]; }
+		inline const _CharType &operator[](Size index) const { return mData[index]; }
+
 		inline const _CharType *GetData() const { return mData; }
 		inline _CharType *GetData() { return mData; }
 		inline Size GetLength() const { return mLength; }
@@ -228,5 +239,8 @@ namespace Jade {
 
 	Char ToChar(WideChar wideChar);
 	WideChar ToWideChar(Char charValue);
+
+	String ToString(const WideString &wide);
+	WideString ToWideString(const String &string);
  
 }

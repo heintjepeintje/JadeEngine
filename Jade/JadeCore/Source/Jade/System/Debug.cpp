@@ -12,26 +12,26 @@ namespace Jade {
 		return Native::_IsDebugging();
 	}
 
-	void PrintDebug(const Char8 *debugString) {
+	void PrintDebug(const Char *debugString) {
 		if (debugString == nullptr) return;
 
 		Native::_PrintDebug(debugString);
 	}
 
-	void PrintDebug(const Char16 *debugString) {
+	void PrintDebug(const WideChar *debugString) {
 		if (debugString == nullptr) return;
 
 		Native::_PrintDebug(debugString);
 	}
 
-	void Assert(bool expression, const Char8 *message) {
+	void Assert(bool expression, const Char *message) {
 		if (expression) return;
 
 		PrintDebug(message);
 		DebugBreak();
 	}
 
-	void Assert(bool expression, const Char16 *message) {
+	void Assert(bool expression, const WideChar *message) {
 		if (expression) return;
 
 		PrintDebug(message);

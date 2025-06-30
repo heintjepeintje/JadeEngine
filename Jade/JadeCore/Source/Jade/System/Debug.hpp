@@ -6,10 +6,10 @@ namespace Jade {
 
 	void DebugBreak();
 	Bool8 IsDebugging();
-	void PrintDebug(const Char8 *debugString);
-	void PrintDebug(const Char16 *debugString);
+	void PrintDebug(const Char *debugString);
+	void PrintDebug(const WideChar *debugString);
 
-	void Assert(bool expression, const Char8 *message);
-	void Assert(bool expression, const Char16 *message);
+	void Assert(bool expression, const Char *message);
+	void Assert(bool expression, const WideChar *message);
 
 }

@@ -16,11 +16,11 @@ namespace Jade {
 		return static_cast<Bool8>(isDebuggerPresent);
 	}
 
-	void Native::_PrintDebug(const Char8 *debugString) {
+	void Native::_PrintDebug(const Char *debugString) {
 		OutputDebugStringA(reinterpret_cast<LPCSTR>(debugString));
 	}
 
-	void Native::_PrintDebug(const Char16 *debugString) {
+	void Native::_PrintDebug(const WideChar *debugString) {
 		OutputDebugStringW(reinterpret_cast<LPCWSTR>(debugString));
 	}
 
