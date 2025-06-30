@@ -1,0 +1,18 @@
+include Jade.mk
+
+JADE_CORE_SOURCES = $(wildcard $(JADE_CORE_SOURCE_DIR)/**.cpp) $(wildcard $(JADE_CORE_SOURCE_DIR)/**/**.cpp) $(wildcard $(JADE_CORE_SOURCE_DIR)/**/**/**.cpp) $(wildcard $(JADE_CORE_SOURCE_DIR)/**/**/**/**.cpp)
+JADE_CORE_BINARIES = $(JADE_CORE_SOURCES:$(JADE_CORE_SOURCE_DIR)/%.cpp=$(JADE_CORE_BINARY_INTERMEDIATE_DIR)/%.o)
+JADE_CORE_DEPENDENCIES = $(JADE_CORE_SOURCES:$(JADE_CORE_SOURCE_DIR)/%.cpp=$(JADE_CORE_BINARY_INTERMEDIATE_DIR)/%.d)
+
+$(JADE_CORE_OUTPUT_TARGET): $(JADE_CORE_BINARIES) $(JADE_CORE_LIBRARIES)
+	echo $@
+	echo.
+	if not exist "$(@D)" mkdir "$(@D)"
+	$(JD_ARCHIVE) -rcs $@ $(JADE_CORE_BINARIES)
+
+$(JADE_CORE_BINARY_INTERMEDIATE_DIR)/%.o: $(JADE_CORE_SOURCE_DIR)/%.cpp
+	echo $@
+	if not exist "$(@D)" mkdir "$(@D)"
+	$(JD_COMPILER) -c $< -o $@ $(JD_CFLAGS) $(JADE_CORE_INCLUDE_DIRS)
+
+-include $(JADE_CORE_DEPENDENCIES)

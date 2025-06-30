@@ -1,0 +1,8 @@
+**.o
+**.d
+**.lib
+**.exe
+
+Binaries/**
+
+.vscode/settings.json

@@ -1,0 +1,30 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Windows (Debug)",
+			"browse": {
+				"path": [
+					"Jade/JadeCore/Source",
+					"Jade/JadeClient/Source",
+					"Jade/JadeServer/Source",
+					"Jade/JadeEditor/Source"
+				]
+			},
+			"includePath": [
+				"Jade/JadeCore/Source",
+				"Jade/JadeClient/Source",
+				"Jade/JadeServer/Source",
+				"Jade/JadeEditor/Source"
+			],
+			"cppStandard": "c++23",
+			"defines": [
+				"JD_BUILD_DEBUG"
+			],
+			"intelliSenseMode": "windows-gcc-x64",
+			"compilerArgs": [
+				"-Wall"
+			]
+        }
+    ]
+}
