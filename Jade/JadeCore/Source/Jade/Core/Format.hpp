@@ -3,33 +3,33 @@
 #include "String.hpp"
 #include "Template.hpp"
 
-#include <vector>
+#include <cstdio>
 
 namespace Jade {
 
 	template<typename _T>
-	class Formatter {
-	public:
-		static String FormatType(const _T &value);
+	struct Formatter {
+		static String FormatType(const String *args, Size argCount, const _T &value);
 	};
 
-	template<> class Formatter<String> { public: static String FormatType(const String &value) { return value; } };
-	template<> class Formatter<Bool8> { public: static String FormatType(const Bool8 &value) { return value ? String("true") : String("false"); } };
-	template<> class Formatter<UInt8> { public: static String FormatType(const UInt8 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
-	template<> class Formatter<UInt16> { public: static String FormatType(const UInt16 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
-	template<> class Formatter<UInt32> { public: static String FormatType(const UInt32 &value) { return UInt32ToString(value); } };
-	template<> class Formatter<UInt64> { public: static String FormatType(const UInt64 &value) { return UInt64ToString(value); } };
-	template<> class Formatter<Int8> { public: static String FormatType(const Int8 &value) { return Int32ToString(static_cast<Int32>(value)); } };
-	template<> class Formatter<Int16> { public: static String FormatType(const Int16 &value) { return Int32ToString(static_cast<Int32>(value)); } };
-	template<> class Formatter<Int32> { public: static String FormatType(const Int32 &value) { return Int32ToString(value); } };
-	template<> class Formatter<Int64> { public: static String FormatType(const Int64 &value) { return Int64ToString(value); } };
-	template<> class Formatter<Float32> { public: static String FormatType(const Float32 &value) { return Float32ToString(value, 7); } };
-	template<> class Formatter<Float64> { public: static String FormatType(const Float64 &value) { return Float64ToString(value, 7); } };
+	template<> struct Formatter<String> { static String FormatType(const String &value) { return value; } };
+	template<> struct Formatter<Char const *> { static String FormatType(Char const *const &value) { return String(value); } };
+	template<> struct Formatter<Char *> { static String FormatType(Char *const &value) { return String(value); } };
+	template<> struct Formatter<Bool8> { static String FormatType(const Bool8 &value) { return value ? String("true") : String("false"); } };
+	template<Size _Size> struct Formatter<Char[_Size]> { static String FormatType(const Char (&value)[_Size]) { return String(value); } };
+	template<> struct Formatter<UInt8> { static String FormatType(const UInt8 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
+	template<> struct Formatter<UInt16> { static String FormatType(const UInt16 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
+	template<> struct Formatter<UInt32> { static String FormatType(const UInt32 &value) { return UInt32ToString(value); } };
+	template<> struct Formatter<UInt64> { static String FormatType(const UInt64 &value) { return UInt64ToString(value); } };
+	template<> struct Formatter<Int8> { static String FormatType(const Int8 &value) { return Int32ToString(static_cast<Int32>(value)); } };
+	template<> struct Formatter<Int16> { static String FormatType(const Int16 &value) { return Int32ToString(static_cast<Int32>(value)); } };
+	template<> struct Formatter<Int32> { static String FormatType(const Int32 &value) { return Int32ToString(value); } };
+	template<> struct Formatter<Int64> { static String FormatType(const Int64 &value) { return Int64ToString(value); } };
+	template<> struct Formatter<Float32> { static String FormatType(const Float32 &value) { return Float32ToString(value, 7); } };
+	template<> struct Formatter<Float64> { static String FormatType(const Float64 &value) { return Float64ToString(value, 7); } };
 
 	template<typename _T>
-	inline String ToString(const _T &value) {
-		return Formatter<_T>::FormatType(value);
-	}
+	inline String ToString(const _T &value) { return Formatter<_T>::FormatType(value); }
 
 	template<typename _T, typename ..._More>
 	inline void FormatNext(String *output, UInt32 index, const _T &current, const _More &...more) {
@@ -41,16 +41,17 @@ namespace Jade {
 	template<typename ..._Args>
 	String Format(const String &string, _Args &&...args) {
 		String result = string;
-
-		String formattedArgs[sizeof...(_Args)] = { };
-		FormatNext(formattedArgs, 0, Jade::Forward<_Args>(args)...);
-
-		Size offset = 0;
-		for (Size i = 0; i < sizeof...(_Args); i++) {
-			Size foundIndex = result.ReplaceFirst("{}", formattedArgs[i], offset);
-			if (foundIndex == __SIZE_MAX__) return String();
-
-			offset += formattedArgs[i].GetLength() - 2;
+		
+		if constexpr (sizeof...(_Args) != 0) {
+			String formattedArgs[sizeof...(_Args)] = { };
+			FormatNext(formattedArgs, 0, Jade::Forward<_Args>(args)...);
+	
+			Size offset = 0;
+			for (Size i = 0; i < sizeof...(_Args); i++) {
+				const String formatted = formattedArgs[i];
+				result.ReplaceFirst("{}", formatted, offset);
+				offset += formatted.GetLength() - 2;
+			}
 		}
 
 		return result;

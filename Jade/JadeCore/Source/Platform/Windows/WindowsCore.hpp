@@ -14,5 +14,6 @@
 #include <heapapi.h>
 #include <processthreadsapi.h>
 #include <synchapi.h>
+#include <profileapi.h>
 
 #endif

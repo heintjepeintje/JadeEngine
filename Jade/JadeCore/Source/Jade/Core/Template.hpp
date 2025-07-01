@@ -15,10 +15,12 @@ namespace Jade {
 	template<typename _T> struct RemoveConst_<_T const> { using Type = _T; };
 	template<typename _T> using RemoveConst = typename RemoveConst_<_T>::Type;
 
+	template<typename _T> using RemoveConstReference = RemoveConst<RemoveReference<_T>>;
+
 	template<typename _T>
 	constexpr _T &&Forward(RemoveReference<_T> &value) { return static_cast<_T &&>(value); }
 
 	template<typename _T>
-	constexpr RemoveReference<_T> &&Move(_T &&value) { return static_cast<RemoveReference<_T> &&>(value); }
+	constexpr RemoveReference<_T> &&Move(_T &&value) { return static_cast<RemoveReference<_T>&&>(value); }
 
 }

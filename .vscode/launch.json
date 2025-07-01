@@ -1,7 +1,7 @@
 {
 	"configurations": [
 		{
-			"name": "(gdb) Launch",
+			"name": "Launch (Debug)",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/Jade/JadeEditor/Binaries/Debug/Output/JadeEditor.exe",
@@ -10,7 +10,24 @@
 			"cwd": "${workspaceFolder}",
 			"environment": [],
 			"externalConsole": true,
-			"MIMode": "gdb"
+			"MIMode": "gdb",
+			"logging": {
+				"engineLogging": "verbose"
+			},
+			"preLaunchTask": "Build (Debug)"
+		},
+		{
+			"name": "Launch (Release)",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/Jade/JadeEditor/Binaries/Debug/Output/JadeEditor.exe",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolderBasename}",
+			"environment": [],
+			"console": "externalTerminal",
+			"externalConsole": true,
+			"preLaunchTask": "Build (Release)"
 		}
 	]
 }

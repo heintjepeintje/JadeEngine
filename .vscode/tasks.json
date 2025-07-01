@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build (Debug)",
+			"command": "make build BUILD_CONFIG=Debug -s",
+			"problemMatcher": "$gcc",
+			"type": "shell",
+			"presentation": {
+				"clear": true,
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"showReuseMessage": false
+			}
+		},
+		{
+			"label": "Build (Release)",
+			"command": "make build BUILD_CONFIG=Release -s",
+			"problemMatcher": "$gcc",
+			"type": "shell",
+			"presentation": {
+				"clear": true,
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"showReuseMessage": false
+			}
+		}
+	]
+}
