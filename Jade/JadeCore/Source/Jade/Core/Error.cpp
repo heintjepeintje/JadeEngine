@@ -13,6 +13,14 @@ namespace Jade {
 		return sErrorCallback;
 	}
 
+	void SetError(ErrorLevel level, const String &message) {
+		sLastError.Level = level;
+		sLastError.Message = message;
+
+		if (sErrorCallback == nullptr) return;
+		sErrorCallback(sLastError);
+	}
+
 	void SetError(const Error &error) {
 		sLastError = error;
 

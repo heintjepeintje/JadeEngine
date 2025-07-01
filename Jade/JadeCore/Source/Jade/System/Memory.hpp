@@ -28,4 +28,10 @@ namespace Jade {
 		return reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
 	}
 
+	template<typename _T>
+	inline _T *OffsetPointer(_T *pointer, Size offset) {
+		if (pointer == nullptr || offset == 0) return pointer;
+		return reinterpret_cast<_T*>(reinterpret_cast<UIntPtr>(pointer) + offset);
+	}
+
 }

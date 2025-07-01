@@ -157,7 +157,7 @@ namespace Jade {
 			return BaseString<_CharType>(newData, mLength + length);
 		}
 
-		inline void Reserve(Size length) {
+		inline void Resize(Size length, _CharType filler = '\0') {
 			if (length < mLength || length == 0) return;
 			
 			_CharType *newData = AllocateArray<_CharType>(length + 1);
@@ -165,11 +165,16 @@ namespace Jade {
 				CopyMemory(newData, mData, mLength * sizeof(_CharType));
 				Free(mData);
 			}
-			mData = newData;
-		}
 
-		inline void Resize(Size length) {
-			Reserve(length);
+			if (filler != '\0') {
+				FillMemory(
+					OffsetPointer(newData, mLength * sizeof(_CharType)),
+					filler,
+					(length - mLength) * sizeof(_CharType)
+				);
+			}
+
+			mData = newData;
 			mLength = length;
 		}
 
@@ -180,28 +185,17 @@ namespace Jade {
 			if (stringLength == 0) return __SIZE_MAX__;
 			if (stringLength > mLength) return __SIZE_MAX__;
 
-			for (Size i = 0; i < mLength - stringLength; i++) {
+			for (Size i = 0; i < mLength - stringLength + 1; i++) {
 				for (Size j = 0; j < stringLength; j++) {
 					if (mData[i + j] != string[j]) break;
 					if (j == stringLength - 1) return i;
 				}
 			}
-		}
-
-		inline Size Find(const BaseString<_CharType> &string, Size start = 0) const {
-			if (start + string.mLength > mLength) return __SIZE_MAX__;
-			if (string.mData == nullptr || mData == nullptr || mLength == 0) return __SIZE_MAX__;
-			if (string.mLength == 0 || string.mLength > mLength) return __SIZE_MAX__;
-
-			for (Size i = start; i < mLength - string.mLength; i++) {
-				for (Size j = 0; j < string.mLength; j++) {
-					if (mData[i + j] != string.mData[j]) break;
-					if (j == string.mLength - 1) return i;
-				}
-			}
 
 			return __SIZE_MAX__;
 		}
+
+		inline Size Find(const BaseString<_CharType> &string, Size start = 0) const { return Find(string.mData); }
 
 		inline BaseString<_CharType> SubString(Size start, Size length) const {
 			if (mData == nullptr || mLength == 0 || start + length > mLength || length == 0) return BaseString<_CharType>();
@@ -211,6 +205,62 @@ namespace Jade {
 
 			return BaseString<_CharType>(stringData, length);
 		}
+
+		inline Size ReplaceFirst(const _CharType *search, const _CharType *replace, Size offset = 0) {
+			if (mData == nullptr || mLength == 0 || search == nullptr || replace == nullptr) return __SIZE_MAX__;
+			
+			Size searchLength = Length(search);
+			Size replaceLength = Length(replace);
+			if (searchLength == 0 || replaceLength == 0 || offset + searchLength > mLength) return __SIZE_MAX__;
+
+			Size foundIndex = Find(search, offset);
+			if (foundIndex == __SIZE_MAX__) return __SIZE_MAX__;
+
+			Size newLength = mLength - searchLength + replaceLength;
+			_CharType *newData = AllocateArray<_CharType>(newLength + 1);
+			CopyMemory(newData, mData, foundIndex * sizeof(_CharType));
+
+			MoveMemory(
+				OffsetPointer(newData, foundIndex + replaceLength),
+				OffsetPointer(mData, foundIndex + searchLength),
+				(mLength - foundIndex - searchLength) * sizeof(_CharType)
+			);
+
+			CopyMemory(OffsetPointer(newData, foundIndex), replace, replaceLength * sizeof(_CharType));
+
+			Free(mData);
+			mData = newData;
+			mLength = newLength;
+
+			return foundIndex;
+		}
+
+		inline Size ReplaceFirst(const BaseString<_CharType> &search, const BaseString<_CharType> &replace, Size offset = 0) {
+			return ReplaceFirst(search.mData, replace.mData, offset);
+		}
+
+		inline UInt32 ReplaceAll(const _CharType *search, const _CharType *replace, Size offset = 0) {
+			if (mData == nullptr || mLength == 0 || search == nullptr || replace == nullptr) return 0;
+
+			Size searchLength = Length(search);
+			Size replaceLength = Length(replace);
+			if (searchLength == 0 || replaceLength == 0 || offset + searchLength > mLength) return 0;
+
+			UInt32 count = 0;
+			Size foundIndex = Find(search, offset);
+			while (foundIndex != __SIZE_MAX__) {
+				count++;
+				foundIndex = ReplaceFirst(search, replace, foundIndex + replaceLength);
+			}
+
+			return count;
+		}
+
+		inline UInt32 ReplaceAll(const BaseString<_CharType> &search, const BaseString<_CharType> &replace, Size offset = 0) {
+			return ReplaceAll(search.mData, replace.mData, offset);
+		}
+
+		inline Bool8 IsEmpty() const { return mData == nullptr || mLength == 0; }
 
 		inline _CharType &operator[](Size index) { return mData[index]; }
 		inline const _CharType &operator[](Size index) const { return mData[index]; }
@@ -230,8 +280,8 @@ namespace Jade {
 		}
 
 	private:
-		_CharType *mData;
-		Size mLength;
+		_CharType *mData = nullptr;
+		Size mLength = 0;
 	};
 
 	using String = BaseString<Char>;
@@ -242,5 +292,12 @@ namespace Jade {
 
 	String ToString(const WideString &wide);
 	WideString ToWideString(const String &string);
+
+	String UInt32ToString(UInt32 value);
+	String UInt64ToString(UInt64 value);
+	String Int32ToString(Int32 value);
+	String Int64ToString(Int64 value);
+	String Float32ToString(Float32 value, UInt32 places = __UINT32_MAX__);
+	String Float64ToString(Float64 value, UInt32 places = __UINT32_MAX__);
  
 }

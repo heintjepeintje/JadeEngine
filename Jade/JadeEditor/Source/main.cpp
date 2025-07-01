@@ -1,24 +1,13 @@
-#include <Jade/Core/Core.hpp>
+#include <Jade/Jade.hpp>
 
-#include <Jade/System/Debug.hpp>
-#include <Jade/System/Memory.hpp>
-#include <jade/Core/Error.hpp>
+struct Vector2 {
+	Jade::Float64 x, y;
+};
 
-#include <Jade/Core/String.hpp>
-
-#include <cstdio>
+template<> class Jade::Formatter<Vector2> { public: static Jade::String FormatType(const Vector2 &value) { return Jade::Format("{{}, {}}", value.x, value.y); } };
 
 int main(int argc, char **argv) {
-	Jade::WideString wideString(255);
-	Jade::String string(255);
-
-	for (Jade::Size i = 0; i < 255; i++) {
-		wideString[i] = static_cast<Jade::WideChar>(i + 1);
-		string[i] = static_cast<Jade::Char>(i + 1);
-	}
-
-	Jade::PrintDebug(wideString.GetData());
-	Jade::PrintDebug(string.GetData());
+	Jade::Print("Hello, Jade! This is a test of the Jade engine. Version: {}. Arguments: {}", 12, Jade::String(argv[0]));
 
 	return 0;
 }

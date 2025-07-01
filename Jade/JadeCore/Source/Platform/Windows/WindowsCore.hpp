@@ -8,6 +8,7 @@
 #include <winbase.h>
 #include <wingdi.h>
 #include <winuser.h>
+#include <wincon.h>
 
 #include <debugapi.h>
 #include <heapapi.h>

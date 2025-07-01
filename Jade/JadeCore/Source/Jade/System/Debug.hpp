@@ -1,15 +1,16 @@
 #pragma once
 
 #include <Jade/Core/Core.hpp>
+#include <Jade/Core/String.hpp>
 
 namespace Jade {
 
 	void DebugBreak();
 	Bool8 IsDebugging();
-	void PrintDebug(const Char *debugString);
-	void PrintDebug(const WideChar *debugString);
+	void PrintDebug(const String &debugString);
+	void PrintDebug(const WideString &debugString);
 
-	void Assert(bool expression, const Char *message);
-	void Assert(bool expression, const WideChar *message);
+	void Assert(bool expression, const String &message);
+	void Assert(bool expression, const WideString &message);
 
 }

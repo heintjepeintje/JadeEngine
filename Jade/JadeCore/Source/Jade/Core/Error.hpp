@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Jade/Core/Core.hpp>
+#include "String.hpp"
 
 namespace Jade {
 
@@ -11,7 +12,7 @@ namespace Jade {
 
 	struct Error {
 		ErrorLevel Level = ErrorLevel::None;
-		Char16 Message[256] = {0};
+		String Message;
 	};
 
 	typedef void (*ErrorCallback)(const Error &error);
@@ -19,6 +20,7 @@ namespace Jade {
 	void SetErrorCallback(ErrorCallback callback);
 	ErrorCallback GetErrorCallback();
 
+	void SetError(ErrorLevel level, const String &message);
 	void SetError(const Error &error);
 	const Error &GetLastError();
 
