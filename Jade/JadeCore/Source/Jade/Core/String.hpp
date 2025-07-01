@@ -347,5 +347,5 @@ namespace Jade {
 	String Int64ToString(Int64 value);
 	String Float32ToString(Float32 value, UInt32 places = JD_DEFAULT_FLOATING_POINT_PLACES);
 	String Float64ToString(Float64 value, UInt32 places = JD_DEFAULT_FLOATING_POINT_PLACES);
-
+	
 }

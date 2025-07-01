@@ -25,7 +25,9 @@ namespace Jade {
 
 	template<typename _T>
 	inline _T *AllocateArray(Size count) {
-		return reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
+		_T *pointer = reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
+		new (pointer) _T[count];
+		return pointer;
 	}
 
 	template<typename _T>

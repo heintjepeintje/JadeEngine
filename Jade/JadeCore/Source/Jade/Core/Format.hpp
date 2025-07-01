@@ -12,21 +12,10 @@ namespace Jade {
 		static String FormatType(const String *args, Size argCount, const _T &value);
 	};
 
-	template<> struct Formatter<String> { static String FormatType(const String &value) { return value; } };
-	template<> struct Formatter<Char const *> { static String FormatType(Char const *const &value) { return String(value); } };
-	template<> struct Formatter<Char *> { static String FormatType(Char *const &value) { return String(value); } };
-	template<> struct Formatter<Bool8> { static String FormatType(const Bool8 &value) { return value ? String("true") : String("false"); } };
-	template<Size _Size> struct Formatter<Char[_Size]> { static String FormatType(const Char (&value)[_Size]) { return String(value); } };
-	template<> struct Formatter<UInt8> { static String FormatType(const UInt8 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
-	template<> struct Formatter<UInt16> { static String FormatType(const UInt16 &value) { return UInt32ToString(static_cast<UInt32>(value)); } };
-	template<> struct Formatter<UInt32> { static String FormatType(const UInt32 &value) { return UInt32ToString(value); } };
-	template<> struct Formatter<UInt64> { static String FormatType(const UInt64 &value) { return UInt64ToString(value); } };
-	template<> struct Formatter<Int8> { static String FormatType(const Int8 &value) { return Int32ToString(static_cast<Int32>(value)); } };
-	template<> struct Formatter<Int16> { static String FormatType(const Int16 &value) { return Int32ToString(static_cast<Int32>(value)); } };
-	template<> struct Formatter<Int32> { static String FormatType(const Int32 &value) { return Int32ToString(value); } };
-	template<> struct Formatter<Int64> { static String FormatType(const Int64 &value) { return Int64ToString(value); } };
-	template<> struct Formatter<Float32> { static String FormatType(const Float32 &value) { return Float32ToString(value, 7); } };
-	template<> struct Formatter<Float64> { static String FormatType(const Float64 &value) { return Float64ToString(value, 7); } };
+	template<typename _T>
+	struct Parser {
+		static _T ParseType(const String &value);
+	};
 
 	template<typename _T>
 	inline String ToString(const _T &value) { return Formatter<_T>::FormatType(value); }
@@ -56,5 +45,75 @@ namespace Jade {
 
 		return result;
 	}
+
+	template<>
+	struct Formatter<String> {
+		static String FormatType(const String &value) {
+			return value;
+		}
+	};
+
+	template<>
+	struct Formatter<Char *> {
+		static String FormatType(Char *const &value) {
+			return String(value);
+		}
+	};
+
+	template<>
+	struct Formatter<Bool8> {
+		static String FormatType(const Bool8 &value) {
+			return value ? String("true") : String("false");
+		}
+	};
+
+	template<Size _Size>
+	struct Formatter<Char[_Size]> {
+		static String FormatType(const Char (&value)[_Size]) {
+			return String(value);
+		}
+	};
+
+	template<>
+	struct Formatter<UInt32> {
+		static String FormatType(const UInt32 &value) {
+			return UInt32ToString(value);
+		}
+	};
+
+	template<>
+	struct Formatter<UInt64> {
+		static String FormatType(const UInt64 &value) {
+			return UInt64ToString(value);
+		}
+	};
+	
+	template<>
+	struct Formatter<Int32> {
+		static String FormatType(const Int32 &value) {
+			return Int32ToString(value);
+		}
+	};
+
+	template<>
+	struct Formatter<Int64> {
+		static String FormatType(const Int64 &value) {
+			return Int64ToString(value);
+		}
+	};
+
+	template<>
+	struct Formatter<Float32> {
+		static String FormatType(const Float32 &value) {
+			return Float32ToString(value, 7);
+		}
+	};
+
+	template<>
+	struct Formatter<Float64> {
+		static String FormatType(const Float64 &value) {
+			return Float64ToString(value, 7);
+		}
+	};
 
 }
