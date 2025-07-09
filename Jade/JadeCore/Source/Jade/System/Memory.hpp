@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Jade/Core/Core.hpp>
+#include <Jade/Core/TypeInfo.hpp>
 
 namespace Jade {
 
@@ -20,20 +21,26 @@ namespace Jade {
 
 	template<typename _T>
 	inline _T *AllocateSingle() {
-		return reinterpret_cast<_T*>(Allocate(sizeof(_T)));
+		_T *pointer = reinterpret_cast<_T*>(Allocate(sizeof(_T)));
+		new (pointer) _T();
+		return pointer;
 	}
 
 	template<typename _T>
 	inline _T *AllocateArray(Size count) {
-		_T *pointer = reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
-		new (pointer) _T[count];
-		return pointer;
+		return reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
 	}
 
 	template<typename _T>
 	inline _T *OffsetPointer(_T *pointer, Size offset) {
 		if (pointer == nullptr || offset == 0) return pointer;
 		return reinterpret_cast<_T*>(reinterpret_cast<UIntPtr>(pointer) + offset);
+	}
+
+	template<typename _T>
+	inline const _T *OffsetPointer(const _T *pointer, Size offset) {
+		if (pointer == nullptr || offset == 0) return pointer;
+		return reinterpret_cast<const _T*>(reinterpret_cast<UIntPtr>(pointer) + offset);
 	}
 
 }

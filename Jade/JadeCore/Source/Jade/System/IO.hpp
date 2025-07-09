@@ -2,7 +2,6 @@
 
 #include <Jade/Core/Core.hpp>
 #include <Jade/Core/String.hpp>
-#include <Jade/Core/Template.hpp>
 
 namespace Jade {
 

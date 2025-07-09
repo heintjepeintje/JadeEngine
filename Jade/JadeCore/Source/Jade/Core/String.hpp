@@ -2,6 +2,7 @@
 
 #include <Jade/Core/Core.hpp>
 #include <Jade/System/Memory.hpp>
+#include "TypeInfo.hpp"
 
 #define JD_DEFAULT_FLOATING_POINT_PLACES 7
 
@@ -9,6 +10,7 @@ namespace Jade {
 
 	template<typename _CharType>
 	class BaseString {
+	static_assert(Jade::IsCharType<_CharType>::Value);
 	public:
 		static Size Length(const _CharType *string) {
 			if (string == nullptr) return 0;
@@ -47,7 +49,7 @@ namespace Jade {
 			if (length == 0) return;
 
 			mLength = length;
-			mData = AllocateArray<_CharType>(length + 1);
+			mData = AllocateArray<_CharType>(mLength + 1);
 		}
 
 		BaseString(const _CharType *data) : mData(nullptr), mLength(0) {
@@ -57,6 +59,12 @@ namespace Jade {
 			mData = AllocateArray<_CharType>(mLength + 1);
 
 			CopyMemory(mData, data, mLength * sizeof(_CharType));
+		}
+
+		BaseString(_CharType c) {
+			mLength = 1;
+			mData = AllocateArray<_CharType>(mLength + 1);
+			mData[0] = c;
 		}
 
 		BaseString(const BaseString<_CharType> &other) : mData(nullptr), mLength(0) {
@@ -69,7 +77,7 @@ namespace Jade {
 		}
 
 		BaseString<_CharType> &operator=(const BaseString<_CharType> &other) {
-			if (mData != nullptr) Free(mData);
+			if (mData != nullptr) delete[] mData;
 
 			if (other.mData == nullptr) {
 				mData = nullptr;
@@ -85,7 +93,7 @@ namespace Jade {
 		}
 
 		BaseString<_CharType> &operator=(const _CharType *data) {
-			if (mData == nullptr) Free(mData);
+			if (mData == nullptr) delete[] mData;
 
 			if (data == nullptr) {
 				mData = nullptr;
@@ -102,7 +110,7 @@ namespace Jade {
 
 		~BaseString() {
 			if (mData == nullptr) return;
-			Free(mData);
+			delete[] mData;
 		}
 		
 		inline BaseString<_CharType> &operator+=(const _CharType *string) {
@@ -121,7 +129,7 @@ namespace Jade {
 			CopyMemory(newData, mData, mLength * sizeof(_CharType));
 			CopyMemory((void*)((UIntPtr)newData + (UIntPtr)mLength), string, length * sizeof(_CharType));
 
-			Free(mData);
+			delete[] mData;
 			mData = newData;
 			mLength = mLength + length;
 			
@@ -146,9 +154,10 @@ namespace Jade {
 			if (length < mLength || length == 0) return;
 			
 			_CharType *newData = AllocateArray<_CharType>(length + 1);
+
 			if (mData != nullptr) {
 				CopyMemory(newData, mData, mLength * sizeof(_CharType));
-				Free(mData);
+				delete[] mData;
 			}
 
 			if (filler != '\0') {
@@ -216,9 +225,13 @@ namespace Jade {
 				(mLength - start - length) * sizeof(_CharType)
 			);
 			
-			CopyMemory(OffsetPointer(newData, start), replace, replaceLength * sizeof(_CharType));
+			CopyMemory(
+				OffsetPointer(newData, start), 
+				replace, 
+				replaceLength * sizeof(_CharType)
+			);
 			
-			Free(mData);
+			delete[] mData;
 			mData = newData;
 			mLength = newLength;
 			

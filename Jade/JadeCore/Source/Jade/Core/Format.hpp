@@ -1,9 +1,7 @@
 #pragma once
 
 #include "String.hpp"
-#include "Template.hpp"
-
-#include <cstdio>
+#include "TypeInfo.hpp"
 
 namespace Jade {
 
@@ -32,7 +30,7 @@ namespace Jade {
 		String result = string;
 		
 		if constexpr (sizeof...(_Args) != 0) {
-			String formattedArgs[sizeof...(_Args)] = { };
+			String formattedArgs[sizeof...(_Args)];
 			FormatNext(formattedArgs, 0, Jade::Forward<_Args>(args)...);
 	
 			Size offset = 0;
@@ -56,6 +54,13 @@ namespace Jade {
 	template<>
 	struct Formatter<Char *> {
 		static String FormatType(Char *const &value) {
+			return String(value);
+		}
+	};
+
+	template<>
+	struct Formatter<const Char *> {
+		static String FormatType(Char const *const &value) {
 			return String(value);
 		}
 	};

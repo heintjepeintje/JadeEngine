@@ -7,6 +7,11 @@
 #include <Jade/Core/Format.hpp>
 #include <Jade/Core/Error.hpp>
 #include <Jade/Core/Logger.hpp>
+#include <Jade/Core/Instance.hpp>
+
+#include <Jade/Data/Iterator.hpp>
+#include <Jade/Data/List.hpp>
+#include <Jade/Data/Algorithm.hpp>
 
 #include <Jade/System/Memory.hpp>
 #include <Jade/System/Debug.hpp>

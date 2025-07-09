@@ -20,7 +20,7 @@ namespace Jade {
 		inline void SetLevel(LogLevel level) { mLevel = level; }
 		inline LogLevel GetLevel() const { return mLevel; }
 
-		template<typename... _Args>
+		template<typename ..._Args>
 		inline void Log(LogLevel level, const String &format, _Args &&...args) {
 			if (level > mLevel) return;
 			String outputMessage;
@@ -37,6 +37,22 @@ namespace Jade {
 			outputMessage += Format(format, Jade::Forward<_Args>(args)...) + GetConsoleColorAsString(ConsoleColor::Normal) + "\n";
 			WriteConsole(outputMessage);
 		}
+
+		template<typename ..._Args>
+		inline void LogTrace(const String &format, _Args &&...args) { Log(LogLevel::Trace, format, Forward<_Args>(args)...); }
+		template<typename ..._Args>
+		inline void LogDebug(const String &format, _Args &&...args) { Log(LogLevel::Debug, format, Forward<_Args>(args)...); }
+		template<typename ..._Args>
+		inline void LogInfo(const String &format, _Args &&...args) { Log(LogLevel::Info, format, Forward<_Args>(args)...); }
+		template<typename ..._Args>
+		inline void LogWarning(const String &format, _Args &&...args) { Log(LogLevel::Warning, format, Forward<_Args>(args)...); }
+		template<typename ..._Args>
+		inline void LogError(const String &format, _Args &&...args) { Log(LogLevel::Error, format, Forward<_Args>(args)...); }
+		template<typename ..._Args>
+		inline void LogFatal(const String &format, _Args &&...args) { Log(LogLevel::Fatal, format, Forward<_Args>(args)...); }
+
+		inline void NewLine() { WriteConsole("\n"); }
+
 	private:
 		String mName;
 		LogLevel mLevel;
