@@ -52,7 +52,7 @@ namespace Jade {
 				return *this;
 			}
 
-			_T *newData = AllocateArray<_Type>(other.mCapacity);
+			_Type *newData = AllocateArray<_Type>(other.mCapacity);
 			CopyMemory(newData, mData, mSize);
 			Free(mData);
 			mData = newData;
@@ -75,7 +75,6 @@ namespace Jade {
 		}
 
 		DynamicList(DynamicList<_Type> &&other) {
-		DynamicList(DynamicList<_Type> &&other) {
 			if (other.mData == nullptr || other.mCapacity == 0) return;
 
 			mData = other.mData;
@@ -87,7 +86,6 @@ namespace Jade {
 			other.mSize = 0;
 		}
 
-		DynamicList<_Type> &operator=(DynamicList<_Type> &&other) {
 		DynamicList<_Type> &operator=(DynamicList<_Type> &&other) {
 			if (mData != nullptr) {
 				for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
@@ -104,7 +102,6 @@ namespace Jade {
 		}
 
 		~DynamicList() {
-		~DynamicList() {
 			if (mData == nullptr) return;
 			for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
 			Free(mData); 
@@ -117,7 +114,7 @@ namespace Jade {
 				return;
 			}
 			
-			_T *newData = AllocateArray<_Type>(capacity);
+			_Type *newData = AllocateArray<_Type>(capacity);
 
 			if (mSize != 0) CopyMemory(newData, mData, mSize * sizeof(_Type));
 			if (mData != nullptr) Free(mData);
@@ -184,11 +181,11 @@ namespace Jade {
 			mSize = 0;
 		}
 
-		inline _T &Get(Size index) { return mData[index]; }
-		inline const _T &Get(Size index) const { return mData[index]; }
+		inline _Type &Get(Size index) { return mData[index]; }
+		inline const _Type &Get(Size index) const { return mData[index]; }
 
 		template<typename _TransformType>
-		inline DynamicList<_TransformType> Transform(_TransformType(*transform)(const _T &)) {
+		inline DynamicList<_TransformType> Transform(_TransformType(*transform)(const _Type &)) {
 			DynamicList<_TransformType> transformedList(mSize);
 			for (Size i = 0; i < mSize; i++) {
 				transformedList.Emplace(transform(mData[i]));
@@ -196,8 +193,8 @@ namespace Jade {
 			return transformedList;
 		}
 
-		virtual _T *GetData() override { return mData; }
-		virtual const _T *GetData() const override { return mData; }
+		virtual _Type *GetData() override { return mData; }
+		virtual const _Type *GetData() const override { return mData; }
 		virtual Size GetSize() const override { return mSize; }
 		inline Size GetCapacity() const { return mCapacity; }
 
