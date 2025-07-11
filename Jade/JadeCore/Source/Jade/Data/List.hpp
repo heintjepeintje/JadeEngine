@@ -16,6 +16,7 @@ namespace Jade {
 		DynamicList(Size capacity) : mCapacity(capacity) {
 			if (mCapacity == 0) return;
 			mData = AllocateArray<_Type>(mCapacity);
+			mData = AllocateArray<_Type>(mCapacity);
 		}
 
 		DynamicList(const DynamicList<_Type> &other) {
@@ -23,6 +24,7 @@ namespace Jade {
 
 			mSize = other.mSize;
 			mCapacity = other.mCapacity;
+			mData = AllocateArray<_Type>(mCapacity);
 			mData = AllocateArray<_Type>(mCapacity);
 
 			for (Size i = 0; i < mSize; i++) ConstructAt(&mData[i], other.mData[i]);
@@ -73,6 +75,7 @@ namespace Jade {
 		}
 
 		DynamicList(DynamicList<_Type> &&other) {
+		DynamicList(DynamicList<_Type> &&other) {
 			if (other.mData == nullptr || other.mCapacity == 0) return;
 
 			mData = other.mData;
@@ -84,6 +87,7 @@ namespace Jade {
 			other.mSize = 0;
 		}
 
+		DynamicList<_Type> &operator=(DynamicList<_Type> &&other) {
 		DynamicList<_Type> &operator=(DynamicList<_Type> &&other) {
 			if (mData != nullptr) {
 				for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
@@ -100,6 +104,7 @@ namespace Jade {
 		}
 
 		~DynamicList() {
+		~DynamicList() {
 			if (mData == nullptr) return;
 			for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
 			Free(mData); 
@@ -114,7 +119,7 @@ namespace Jade {
 			
 			_T *newData = AllocateArray<_Type>(capacity);
 
-			if (mSize != 0) CopyMemory(newData, mData, mSize * sizeof(_T));
+			if (mSize != 0) CopyMemory(newData, mData, mSize * sizeof(_Type));
 			if (mData != nullptr) Free(mData);
 
 			mData = newData;
@@ -145,7 +150,7 @@ namespace Jade {
 			mSize = size;
 		}
 
-		inline void Add(const _T &item) {
+		inline void Add(const _Type &item) {
 			if (mSize + 1 > mCapacity) Reserve(mSize + 1);
 			ConstructAt(&mData[mSize], item);
 			mSize = mSize + 1;
@@ -165,6 +170,7 @@ namespace Jade {
 			if (index + 1 < mSize) {
 				Jade::ConstructAt(&mData[index], Forward<_Args>(args)...);
 			} else if (index + 1 > mSize) {
+				for (Size i = mSize - 1; i < index; i++) ConstructAt<_Type>(&mData[i]);
 				for (Size i = mSize - 1; i < index; i++) ConstructAt<_Type>(&mData[i]);
 				ConstructAt(&mData[index], Forward<_Args>(args)...);
 			}
@@ -195,8 +201,8 @@ namespace Jade {
 		virtual Size GetSize() const override { return mSize; }
 		inline Size GetCapacity() const { return mCapacity; }
 
-	private:
-		_T *mData = nullptr;
+	private:		
+		_Type *mData = nullptr;
 		Size mSize = 0;
 		Size mCapacity = 0;
 	};
