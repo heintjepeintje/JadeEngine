@@ -10,7 +10,7 @@ namespace Jade {
 
 	template<typename _CharType>
 	class BaseString {
-	static_assert(Jade::IsCharType<_CharType>::Value);
+	static_assert(Jade::IsCharTypeV<_CharType>());
 	public:
 		static Size Length(const _CharType *string) {
 			if (string == nullptr) return 0;

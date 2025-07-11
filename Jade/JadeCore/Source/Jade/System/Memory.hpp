@@ -19,25 +19,25 @@ namespace Jade {
 	UInt32 EndianSwap(UInt32 value);
 	UInt64 EndianSwap(UInt64 value);
 
-	template<typename _T>
+	template<typename _Type>
 	inline _T *AllocateSingle() {
 		_T *pointer = reinterpret_cast<_T*>(Allocate(sizeof(_T)));
 		new (pointer) _T();
 		return pointer;
 	}
 
-	template<typename _T>
+	template<typename _Type>
 	inline _T *AllocateArray(Size count) {
 		return reinterpret_cast<_T*>(Allocate(sizeof(_T) * count));
 	}
 
-	template<typename _T>
+	template<typename _Type>
 	inline _T *OffsetPointer(_T *pointer, Size offset) {
 		if (pointer == nullptr || offset == 0) return pointer;
 		return reinterpret_cast<_T*>(reinterpret_cast<UIntPtr>(pointer) + offset);
 	}
 
-	template<typename _T>
+	template<typename _Type>
 	inline const _T *OffsetPointer(const _T *pointer, Size offset) {
 		if (pointer == nullptr || offset == 0) return pointer;
 		return reinterpret_cast<const _T*>(reinterpret_cast<UIntPtr>(pointer) + offset);

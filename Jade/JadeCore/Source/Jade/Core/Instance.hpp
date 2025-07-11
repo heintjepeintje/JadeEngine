@@ -7,24 +7,24 @@
 
 namespace Jade {
 
-	template<typename _T>
-	void *AddressOf(_T &object) {
+	template<typename _Type>
+	constexpr void *AddressOf(_T &object) {
 		return static_cast<void*>(&object);
 	}
 
 	template<typename _T, typename ..._Args>
-	void *ConstructAt(_T *pointer, _Args &&...args) {
-		static_assert(!IsArrayType<_T>::Value, "Cannot use ConstructAt with array type");
+	constexpr void *ConstructAt(_T *pointer, _Args &&...args) {
+		static_assert(!IsArrayType<_Type>::Value, "Cannot use ConstructAt with array type");
 		return ::new (AddressOf(*pointer)) _T(Forward<_Args>(args)...);
 	}
 
-	template<typename _T>
-	void DestroyAt(_T *pointer) {
-		static_assert(!IsArrayType<_T>::Value, "Cannot use DestroyAt with array type");
+	template<typename _Type>
+	constexpr void DestroyAt(_T *pointer) {
+		static_assert(!IsArrayType<_Type>::Value, "Cannot use DestroyAt with array type");
 		pointer->~_T();
 	}
 
-	template<typename _T>
+	template<typename _Type>
 	class Singleton {
 		static _T &GetInstance() {
 			static _T sInstance;

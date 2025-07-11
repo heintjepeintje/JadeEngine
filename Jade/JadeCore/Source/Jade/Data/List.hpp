@@ -8,26 +8,37 @@
 
 namespace Jade {
 
-	template<typename _T>
-	class List {	
+	template<typename _Type>
+	class DynamicList : public Iterable<_Type> {
 	public:
-		List() = default;
-		List(Size capacity) : mCapacity(capacity) {
+		DynamicList() { }
+
+		DynamicList(Size capacity) : mCapacity(capacity) {
 			if (mCapacity == 0) return;
-			mData = AllocateArray<_T>(mCapacity);
+			mData = AllocateArray<_Type>(mCapacity);
 		}
 
-		List(const List<_T> &other) {
+		DynamicList(const DynamicList<_Type> &other) {
 			if (other.mData == nullptr || other.mCapacity == 0) return;
 
 			mSize = other.mSize;
 			mCapacity = other.mCapacity;
-			mData = AllocateArray<_T>(mCapacity);
+			mData = AllocateArray<_Type>(mCapacity);
 
 			for (Size i = 0; i < mSize; i++) ConstructAt(&mData[i], other.mData[i]);
 		}
 
-		List<_T> &operator=(const List<_T> &other) {
+		DynamicList(const Iterable<_Type> &iterable) {
+			if (iterable.GetData() == nullptr || iterable.GetSize() == 0) return;
+
+			mSize = iterable.GetSize();
+			mCapacity = mSize;
+			mData = AllocateArray<_Type>(mCapacity);
+
+			for (Size i = 0; i < mSize; i++) ConstructAt(&mData[i], iterable[i]);
+		}
+
+		DynamicList<_Type> &operator=(const DynamicList<_Type> &other) {
 			if (this == &other) return *this;
 
 			if (other.mData == nullptr || other.mCapacity == 0) {
@@ -39,7 +50,7 @@ namespace Jade {
 				return *this;
 			}
 
-			_T *newData = AllocateArray<_T>(other.mCapacity);
+			_T *newData = AllocateArray<_Type>(other.mCapacity);
 			CopyMemory(newData, mData, mSize);
 			Free(mData);
 			mData = newData;
@@ -61,7 +72,7 @@ namespace Jade {
 			return *this;
 		}
 
-		List(List<_T> &&other) {
+		DynamicList(DynamicList<_Type> &&other) {
 			if (other.mData == nullptr || other.mCapacity == 0) return;
 
 			mData = other.mData;
@@ -73,7 +84,7 @@ namespace Jade {
 			other.mSize = 0;
 		}
 
-		List<_T> &operator=(List<_T> &&other) {
+		DynamicList<_Type> &operator=(DynamicList<_Type> &&other) {
 			if (mData != nullptr) {
 				for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
 				Free(mData);
@@ -88,7 +99,7 @@ namespace Jade {
 			mSize = 0;
 		}
 
-		~List() {
+		~DynamicList() {
 			if (mData == nullptr) return;
 			for (Size i = 0; i < mSize; i++) DestroyAt(&mData[i]);
 			Free(mData); 
@@ -101,7 +112,7 @@ namespace Jade {
 				return;
 			}
 			
-			_T *newData = AllocateArray<_T>(capacity);
+			_T *newData = AllocateArray<_Type>(capacity);
 
 			if (mSize != 0) CopyMemory(newData, mData, mSize * sizeof(_T));
 			if (mData != nullptr) Free(mData);
@@ -154,7 +165,7 @@ namespace Jade {
 			if (index + 1 < mSize) {
 				Jade::ConstructAt(&mData[index], Forward<_Args>(args)...);
 			} else if (index + 1 > mSize) {
-				for (Size i = mSize - 1; i < index; i++) ConstructAt<_T>(&mData[i]);
+				for (Size i = mSize - 1; i < index; i++) ConstructAt<_Type>(&mData[i]);
 				ConstructAt(&mData[index], Forward<_Args>(args)...);
 			}
 
@@ -170,27 +181,18 @@ namespace Jade {
 		inline _T &Get(Size index) { return mData[index]; }
 		inline const _T &Get(Size index) const { return mData[index]; }
 
-		inline _T &operator[](Size index) { return Get(index); }
-		inline const _T &operator[](Size index) const { return Get(index); }
-
-		inline Iterator<_T> GetIterator() { return Iterator<_T>(mData, mSize); }
-		inline ConstIterator<_T> GetConstIterator() const { return ConstIterator<_T>(mData, mSize); }
-
-		inline operator Iterator<_T>() { return Iterator<_T>(mData, mSize); }
-		inline operator ConstIterator<_T>() const { return ConstIterator<_T>(mData, mSize); }
-
 		template<typename _TransformType>
-		inline List<_TransformType> Transform(_TransformType(*transform)(const _T &)) {
-			List<_TransformType> transformedList(mSize);
+		inline DynamicList<_TransformType> Transform(_TransformType(*transform)(const _T &)) {
+			DynamicList<_TransformType> transformedList(mSize);
 			for (Size i = 0; i < mSize; i++) {
 				transformedList.Emplace(transform(mData[i]));
 			}
 			return transformedList;
 		}
 
-		inline _T *GetData() { return mData; }
-		inline const _T *GetData() const { return mData; }
-		inline Size GetSize() const { return mSize; }
+		virtual _T *GetData() override { return mData; }
+		virtual const _T *GetData() const override { return mData; }
+		virtual Size GetSize() const override { return mSize; }
 		inline Size GetCapacity() const { return mCapacity; }
 
 	private:

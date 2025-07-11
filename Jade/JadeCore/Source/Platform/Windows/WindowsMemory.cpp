@@ -15,7 +15,7 @@ namespace Jade {
 		LPVOID allocatedMemory = HeapAlloc(
 			processHeap,
 			HEAP_ZERO_MEMORY,
-			static_cast<SIZE_T>(size)
+			static_cast<SIZE_Type>(size)
 		);
 
 		return allocatedMemory;
@@ -29,7 +29,7 @@ namespace Jade {
 			processHeap,
 			HEAP_ZERO_MEMORY,
 			ptr,
-			static_cast<SIZE_T>(size)
+			static_cast<SIZE_Type>(size)
 		);
 
 		return reallocatedMemory;
@@ -46,23 +46,23 @@ namespace Jade {
 	}
 
 	void Native::_CopyMemory(void *destination, const void *source, Size size) {
-		RtlCopyMemory(destination, source, static_cast<SIZE_T>(size));
+		RtlCopyMemory(destination, source, static_cast<SIZE_Type>(size));
 	}
 
 	void Native::_FillMemory(void *pointer, Byte value, Size size) {
-		RtlFillMemory(pointer, static_cast<SIZE_T>(size), value);
+		RtlFillMemory(pointer, static_cast<SIZE_Type>(size), value);
 	}
 
 	void Native::_MoveMemory(void *destination, const void *source, Size size) {
-		RtlMoveMemory(destination, source, static_cast<SIZE_T>(size));
+		RtlMoveMemory(destination, source, static_cast<SIZE_Type>(size));
 	}
 
 	void Native::_ZeroMemory(void *pointer, Size size) {
-		RtlZeroMemory(pointer, static_cast<SIZE_T>(size));
+		RtlZeroMemory(pointer, static_cast<SIZE_Type>(size));
 	}
 
 	Size Native::_CompareMemory(const void *left, const void *right, Size size) {
-		return RtlCompareMemory(left, right, static_cast<SIZE_T>(size));
+		return RtlCompareMemory(left, right, static_cast<SIZE_Type>(size));
 	}
 
 	UInt16 Native::_EndianSwap(UInt16 value) {

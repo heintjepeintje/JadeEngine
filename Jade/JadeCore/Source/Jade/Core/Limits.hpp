@@ -4,7 +4,7 @@
 
 namespace Jade {
 
-	template<typename _T> _T MaxValue();
+	template<typename _Type> _T MaxValue();
 
 	template<> constexpr UInt8 MaxValue() { return __UINT8_MAX__; }
 	template<> constexpr UInt16 MaxValue() { return __UINT16_MAX__; }

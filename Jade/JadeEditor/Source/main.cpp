@@ -2,12 +2,19 @@
 
 #include <vector>
 #include <cmath>
+#include <functional>
 
 Jade::Logger core("Core");
 
 #define LOG_LINE(x) core.Log(Jade::LogLevel::Debug, "{}: {}", __LINE__, #x); x; core.NewLine()
 
 struct Vector2 {
+public:
+	static Jade::Float32 GetLength(const Vector2 &v) {
+		Jade::Float32 length = std::sqrt(v.X * v.X + v.Y * v.Y);
+		core.LogTrace("Length: {}", length);
+		return length;
+	}
 public:
 	Vector2() : X(0.0f), Y(0.0f) {
 		core.LogTrace("Constructing default vector");
@@ -61,18 +68,18 @@ public:
 	Jade::Float32 X, Y;
 };
 
-void PrintVector2(Jade::Size index, const Vector2 &v) {
-	core.LogInfo("[{}]: {}, {}", index, v.X, v.Y);
+void PrintVector2(const Vector2 &v) {
+	core.LogInfo("{}, {}", v.X, v.Y);
 }
 
-void PrintFloat32(Jade::Size index, const Jade::Float32 &v) {
-	core.LogInfo("[{}]: {}", index, v);
+void PrintFloat32(const Jade::Float32 &v) {
+	core.LogInfo("{}", v);
 }
 
 int main(int argc, char **argv) {
 	
 	{
-		LOG_LINE(Jade::List<Vector2> items(10));
+		LOG_LINE(Jade::DynamicList<Vector2> items(10));
 		LOG_LINE(items.Emplace(5.0f, 7.0f));
 		LOG_LINE(items.Emplace(11.0f, 20.0f));
 		LOG_LINE(items.Emplace(10.0f, 4.0f));
@@ -82,15 +89,14 @@ int main(int argc, char **argv) {
 		LOG_LINE(items.Emplace(41.0f, 32.0f));
 		LOG_LINE(items.Emplace(18.0f, -1.0f));
 		LOG_LINE(items.Emplace(1.0f, -12.0f));
-
+	
 		LOG_LINE(const Jade::Size index = Jade::Find<Vector2>(items, Vector2(9.0f, 7.0f)));
 		if (index != Jade::MaxValue<Jade::Size>()) {
 			core.LogInfo("Found at index {}", index);
 		}
-		items.GetConstIterator().ForEach(PrintVector2);
+		LOG_LINE(Jade::ForEach(items, PrintVector2));
 
-		LOG_LINE(Jade::List<Jade::Float32> lengths = items.Transform<Jade::Float32>([](const Vector2 &v) { return v.GetLength(); }));
-		lengths.GetConstIterator().ForEach(PrintFloat32);
+		LOG_LINE(Jade::ForEach(items.Transform(Vector2::GetLength), PrintFloat32));
 	}
 
 	Jade::DebugBreak();

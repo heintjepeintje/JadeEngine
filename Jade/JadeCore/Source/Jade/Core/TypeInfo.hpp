@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Jade/Core/Core.hpp>
+#include <string>
 
 #define JD_TEMPLATE_BOOL_TRUE { static constexpr ::Jade::Bool8 Value = true; }
 #define JD_TEMPLATE_BOOL_FALSE { static constexpr ::Jade::Bool8 Value = false; }
@@ -13,43 +14,48 @@ namespace Jade {
 	template<typename _If, typename _Else> struct IfElseType<true, _If, _Else> JD_TEMPLATE_HAS_TYPE(_If);
 	template<typename _If, typename _Else> struct IfElseType<false, _If, _Else> JD_TEMPLATE_HAS_TYPE(_Else);
 
-	template<typename _T> struct RemoveReference JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemoveReference<_T &> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> class RemoveReference<_T &&> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> using RemoveReferenceType = RemoveReference<_T>::Type;
+	template<typename _Type> struct RemoveReference JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemoveReference<_T &> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> class RemoveReference<_T &&> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> using RemoveReferenceT = RemoveReference<_Type>::Type;
 	
-	template<typename _T> struct RemoveConst JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemoveConst<_T const> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> using RemoveConstType = RemoveConst<_T>::Type;
+	template<typename _Type> struct RemoveConst JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemoveConst<_T const> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> using RemoveConstT = RemoveConst<_Type>::Type;
 	
-	template<typename _T> struct RemoveVolatile JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemoveVolatile<volatile _T> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> using RemoveConstType = RemoveConst<_T>::Type; 
+	template<typename _Type> struct RemoveVolatile JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemoveVolatile<volatile _Type> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> using RemoveVolatileT = RemoveVolatile<_Type>::Type;
 	
-	template<typename _T> struct RemovePointer JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemovePointer<_T*> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemovePointer<_T *const> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemovePointer<_T *volatile> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> struct RemovePointer<_T *const volatile> JD_TEMPLATE_HAS_TYPE(_T);
-	template<typename _T> using RemovePointerType = RemovePointer<_T>::Type;
+	template<typename _Type> struct RemovePointer JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemovePointer<_T*> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemovePointer<_T *const> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemovePointer<_T *volatile> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> struct RemovePointer<_T *const volatile> JD_TEMPLATE_HAS_TYPE(_T);
+	template<typename _Type> using RemovePointerT = RemovePointer<_Type>::Type;
 
-	template<typename _T> struct IsVoidType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsVoidType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsVoidType<void> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsVoidTypeV() { return IsVoidType<_Type>::Value; }
 	
-	template<typename _T> struct IsArrayType JD_TEMPLATE_BOOL_FALSE;
-	template<typename _T> struct IsArrayType<_T[]> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> struct IsArrayType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsArrayType<_T[]> JD_TEMPLATE_BOOL_TRUE;
 	template<typename _T, Size _Count> struct IsArrayType<_T[_Count]> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsArrayTypeV() { return IsArrayType<_Type>::Value; }
 
-	template<typename _T> struct IsConstType JD_TEMPLATE_BOOL_FALSE;
-	template<typename _T> struct IsConstType<const _T> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> struct IsConstType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsConstType<const _Type> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsConstTypeV() { return IsConstType<_Type>::Value; }
 	
-	template<typename _T> struct IsPointerType JD_TEMPLATE_BOOL_FALSE;
-	template<typename _T> struct IsPointerType<_T *> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> struct IsPointerType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsPointerType<_T *> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsPointerTypeV() { return IsPointerType<_Type>::Value; }
 	
 	template<typename _A, typename _B> struct IsSameType JD_TEMPLATE_BOOL_FALSE;
-	template<typename _T> struct IsSameType<_T, _T> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> struct IsSameType<_T, _Type> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _A, typename _B> constexpr Bool8 IsSameTypeV() { return IsSameType<_A, _B>::Value; }
 	
-	template<typename _T> struct IsNumericType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsNumericType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsNumericType<char> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsNumericType<short> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsNumericType<int> JD_TEMPLATE_BOOL_TRUE;
@@ -63,34 +69,39 @@ namespace Jade {
 	template<> struct IsNumericType<float> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsNumericType<double> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsNumericType<long double> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsNumericTypeV() { return IsNumericType<_Type>::Value; }
 
-	template<typename _T> struct IsSignedType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsSignedType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsSignedType<char> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsSignedType<short> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsSignedType<int> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsSignedType<long> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsSignedType<long long> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsSignedTypeV() { return IsSignedType<_Type>::Value; }
 
-	template<typename _T> struct IsUnsignedType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsUnsignedType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsUnsignedType<unsigned char> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsUnsignedType<unsigned short> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsUnsignedType<unsigned int> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsUnsignedType<unsigned long> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsUnsignedType<unsigned long long> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsUnsignedTypeV() { return IsUnsignedType<_Type>::Value; }
 	
-	template<typename _T> struct IsFloatingPointType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsFloatingPointType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsFloatingPointType<float> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsFloatingPointType<double> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsFloatingPointType<long double> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsFloatingPointTypeV() { return IsFloatingPointType<_Type>::Value; }
 	
-	template<typename _T> struct IsCharType JD_TEMPLATE_BOOL_FALSE;
+	template<typename _Type> struct IsCharType JD_TEMPLATE_BOOL_FALSE;
 	template<> struct IsCharType<Char> JD_TEMPLATE_BOOL_TRUE;
 	template<> struct IsCharType<WideChar> JD_TEMPLATE_BOOL_TRUE;
+	template<typename _Type> constexpr Bool8 IsCharTypeV() { return IsCharType<_Type>::Value; }
 
-	template<typename _T>
-	constexpr _T &&Forward(RemoveReferenceType<_T> &value) { return static_cast<_T&&>(value); }
+	template<typename _Type>
+	constexpr _T &&Forward(RemoveReferenceT<_Type> &value) { return static_cast<_T&&>(value); }
 
-	template<typename _T>
-	constexpr RemoveReferenceType<_T> &&Move(RemoveReferenceType<_T> &&value) { return static_cast<RemoveReferenceType<_T>&&>(value); }
+	template<typename _Type>
+	constexpr RemoveReferenceT<_Type> &&Move(RemoveReferenceT<_Type> &&value) { return static_cast<RemoveReferenceT<_Type>&&>(value); }
 
 }

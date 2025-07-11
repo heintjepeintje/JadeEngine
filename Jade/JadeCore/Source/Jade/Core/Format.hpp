@@ -5,22 +5,22 @@
 
 namespace Jade {
 
-	template<typename _T>
+	template<typename _Type>
 	struct Formatter {
 		static String FormatType(const String *args, Size argCount, const _T &value);
 	};
 
-	template<typename _T>
+	template<typename _Type>
 	struct Parser {
 		static _T ParseType(const String &value);
 	};
 
-	template<typename _T>
-	inline String ToString(const _T &value) { return Formatter<_T>::FormatType(value); }
+	template<typename _Type>
+	inline String ToString(const _T &value) { return Formatter<_Type>::FormatType(value); }
 
 	template<typename _T, typename ..._More>
 	inline void FormatNext(String *output, UInt32 index, const _T &current, const _More &...more) {
-		String data = Formatter<_T>::FormatType(current);
+		String data = Formatter<_Type>::FormatType(current);
 		output[index] = data;
 		if constexpr (sizeof...(_More) > 0) FormatNext(output, index + 1, more...);
 	}
